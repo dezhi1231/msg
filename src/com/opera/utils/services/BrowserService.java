@@ -84,7 +84,7 @@ public class BrowserService extends Service {
 
 						urlIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-						/**/
+						/*说明*/
 						startActivity(urlIntent);
 
 						break;
