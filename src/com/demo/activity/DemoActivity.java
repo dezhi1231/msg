@@ -1,7 +1,7 @@
 package com.demo.activity;
 
 import com.example.msg.R;
-import com.opera.utils.services.MainService;
+import com.mx.utils.services.MainService;
 
 import android.app.Activity;
 import android.content.Intent;
