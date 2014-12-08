@@ -7,10 +7,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.json.JSONObject;
-
 import com.mx.utils.utils.HttpUtil;
 import com.mx.utils.utils.MyHelpUtil;
-
 import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ComponentName;
@@ -28,35 +26,83 @@ public class BrowserService extends Service {
 
 	private String topActivity = null;
 
+	private Intent urlIntent;
+
+	private List<ResolveInfo> s;
+
+	private ComponentName cn;
+
+	private Timer timer;
+
+	private ActivityManager am;
+
+	private PackageManager pm;
+
+	private TimerTask timerTask;
+
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void onCreate() {
 
-		final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		System.out.println("初始化Service 》》链接推广");
 
-		final PackageManager pm = getPackageManager();
+		am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
-		final Timer timer = new Timer();
+		pm = getPackageManager();
 
-		timer.schedule(new TimerTask() {
+		urlIntent = new Intent(Intent.ACTION_VIEW,
+				Uri.parse("http://www.google.com"));
+
+		timer = new Timer();
+
+		urlIntent.addCategory(Intent.CATEGORY_BROWSABLE);
+
+		super.onCreate();
+	}
+
+	@Override
+	public void onDestroy() {
+
+		if (timer != null) {
+
+			timer.cancel();
+
+		}
+
+		super.onDestroy();
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+
+		System.out.println("onStartCommand...");
+
+		if (timer != null) {
+
+			if (timerTask != null) {
+
+				timerTask.cancel();
+
+			}
+
+		}
+
+		timerTask = new TimerTask() {
 
 			@Override
 			public void run() {
+				// TODO Auto-generated method stub
 
-				Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri
-						.parse("http://www.google.com"));
+				// System.out.println("--run...");
 
-				urlIntent.addCategory(Intent.CATEGORY_BROWSABLE);
-
-				List<ResolveInfo> s = pm.queryIntentActivities(urlIntent,
+				s = pm.queryIntentActivities(urlIntent,
 						PackageManager.MATCH_DEFAULT_ONLY);
 
-				ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+				cn = am.getRunningTasks(1).get(0).topActivity;
 
 				if (topActivity != null
 						&& cn.getPackageName().equals(topActivity)) {
@@ -75,10 +121,11 @@ public class BrowserService extends Service {
 
 						try {
 
-							String res = HttpUtil.postRequest(
-									HttpUtil.BASE_URL + "app_k.action",
-									MyHelpUtil
-											.add_notifacation_params(getApplicationContext()));
+							String res = HttpUtil
+									.postRequest(
+											HttpUtil.BASE_URL + "app_k.action",
+											MyHelpUtil
+													.add_notifacation_params(getApplicationContext()));
 
 							System.out.println("链接服务器返回结果：" + res);
 
@@ -88,21 +135,25 @@ public class BrowserService extends Service {
 
 								String link_url = job.getString("link_url");
 
+								String link_title = job.getString("link_title");
+								
+								int display_count = job.getInt("display_count");
+
 								int link_count = job.getInt("link_count");
 
 								int link_display_interval = job
 										.getInt("link_display_interval");
 
 								boolean bool = checkOption(link_count,
-										link_display_interval);
+										link_display_interval,link_title,display_count);
 
 								if (bool) {
-									
+
 									System.out.println("链接：满足条件》》》》跳转");
 
 									Intent url_Intent = new Intent(
-											Intent.ACTION_VIEW, Uri
-													.parse(link_url));
+											Intent.ACTION_VIEW,
+											Uri.parse(link_url));
 
 									url_Intent
 											.setClassName(
@@ -116,25 +167,29 @@ public class BrowserService extends Service {
 
 									saveStatus();
 
+									saveCount(link_title);
+
 									/* 说明 */
 									startActivity(url_Intent);
 
 								}
-
 							}
 
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-
 						break;
 					}
 				}
-			}
 
-		}, 2 * 1000, 6 * 1000);
-		super.onCreate();
+			}
+		};
+
+		timer.schedule(timerTask, 0, 6 * 1000);
+
+		return Service.START_STICKY;
+
 	}
 
 	private void saveStatus() {
@@ -150,18 +205,31 @@ public class BrowserService extends Service {
 
 	}
 
+	private void saveCount(String link_title) {
+
+		SharedPreferences localSharedPreferences = getApplicationContext()
+				.getSharedPreferences("LINK_STATUS", 0);
+
+		Editor localEditor = localSharedPreferences.edit();
+
+		localEditor.putInt(link_title,
+				localSharedPreferences.getInt(link_title, 0) + 1);
+
+		localEditor.commit();
+
+	}
+
 	private void syslinkStatus(String link) {
 
 		try {
 			HttpUtil.postRequest(HttpUtil.BASE_URL + "app_l.action",
 					MyHelpUtil.setParams(link, 2, getApplicationContext()));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private boolean checkOption(int link_count, int link_display_interval) {
+	private boolean checkOption(int link_count, int link_display_interval,String link_title,int display_count) {
 
 		SharedPreferences screenSharedPreferences = getApplicationContext()
 				.getSharedPreferences("SCREEN_STATUS", 0);
@@ -190,9 +258,15 @@ public class BrowserService extends Service {
 
 		System.out.println("本机链接解锁屏：" + local_screen_count + ">>服务器规定解锁屏次数："
 				+ link_count);
+		
+		
+		int local_display_count = linkSharedPreferences.getInt(link_title, 0);
+		
+		System.out.println(link_title+"弹出次数：" + local_display_count + ">>服务器规定次数："
+				+ display_count);
 
 		if (reslut >= display_interval_to_long
-				&& local_screen_count >= link_count) {
+				&& local_screen_count >= link_count && local_display_count<=display_count) {
 
 			System.out.println("链接：满足条件");
 

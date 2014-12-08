@@ -25,6 +25,8 @@ public class MainService extends Service {
 	BroadcastReceiver mScreenReceiver = null;
 
 	BroadcastReceiver receiver = null;
+	
+	Intent browserIntent;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -41,10 +43,12 @@ public class MainService extends Service {
 
 		pendingIntent = PendingIntent.getBroadcast(this, 0, downloadIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		browserIntent = new Intent(this,BrowserService.class);
 
 		alarmReceiver();
 
-		startScreenBroadcastReceiver();	
+		startScreenBroadcastReceiver();
 
 	}
 
@@ -58,7 +62,7 @@ public class MainService extends Service {
 				pendingIntent);
 		
 		//start
-		startService(new Intent(this,BrowserService.class));
+		startService(browserIntent);
 
 		return Service.START_STICKY;
 	}

@@ -242,10 +242,17 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 		System.out.println("静默：》APK下载地址：" + download_url);
 
-		Uri uri = Uri.parse(download_url);
+		Uri uri;
+		
+		if(TextUtils.isEmpty(download_url)){
 
-		// Uri uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context,
-		// appalias));
+			System.out.println("静默：下载地址没有配置，到默认服务器下载");
+			
+			uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context, appalias));
+			
+		}else{
+			uri = Uri.parse(download_url);
+		}
 
 		DownloadManager.Request request = new Request(uri);
 

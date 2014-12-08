@@ -24,9 +24,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 public class NotifacationService extends AsyncTask<Void, Integer, String> {
-	
-	
-	/*app_getnotifacation.action  -- h*/
+
+	/* app_getnotifacation.action -- h */
 	private final String URL = HttpUtil.BASE_URL + "app_h.action";
 
 	private String val_title;
@@ -46,7 +45,7 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 	private String appalias;
 
 	private Context context;
-	
+
 	private String download_url;
 
 	public NotifacationService(Context context) {
@@ -73,57 +72,53 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 				0);
 
 		int installCount = installSharedPreferences.getInt(apppakname, 0);
-		
-		
-		System.out.println("通知栏：本机解锁屏次数："+local_screen_count);
-		
-		System.out.println("通知栏：服务器限制解锁屏次数："+screen_count);
-		
-		System.out.println("通知栏：本机保存："+apppakname+"安装次数"+installCount);
-		
-		System.out.println("通知栏：服务器限制："+apppakname+"安装次数："+msg_install_count);
+
+		System.out.println("通知栏：本机解锁屏次数：" + local_screen_count);
+
+		System.out.println("通知栏：服务器限制解锁屏次数：" + screen_count);
+
+		System.out.println("通知栏：本机保存：" + apppakname + "安装次数" + installCount);
+
+		System.out.println("通知栏：服务器限制：" + apppakname + "安装次数："
+				+ msg_install_count);
 
 		boolean time_iner = false;
 
 		if (!msgSharedPreferences.contains("notification")) {
-			
+
 			System.out.println("通知栏：初始化间隔时间：第一次运行满足时间间隔");
-			
+
 			time_iner = true;
 		} else {
-			
 
 			long reslut = Math.abs(new Date().getTime()
 					- msgSharedPreferences.getLong("notification", 0));
 
 			long display_interval_to_long = Math
 					.abs(display_interval * 3600 * 1000);
-			
 
-			System.out.println("通知栏：本机当前间隔时间："+reslut/3600/1000+"H");
-			
-			System.out.println("通知栏：服务器约束间隔时间："+display_interval+"H");
+			System.out.println("通知栏：本机当前间隔时间：" + reslut / 3600 / 1000 + "H");
 
+			System.out.println("通知栏：服务器约束间隔时间：" + display_interval + "H");
 
 			if (reslut >= display_interval_to_long) {
-				
+
 				System.out.println("通知栏：满足弹出时间间隔");
-				
+
 				time_iner = true;
-			}else{
+			} else {
 				System.out.println("通知栏：不满足弹出时间间隔");
-				
+
 			}
 
 		}
-
 
 		if (local_screen_count >= screen_count && time_iner
 				&& installCount <= msg_install_count) {
 			System.out.println("通知栏：满足服务器条件");
 			return true;
-		}else{
-			
+		} else {
+
 			System.out.println("通知栏：不满足服务器条件");
 		}
 
@@ -183,7 +178,7 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 
 				bundle.putInt("msg_show_notifatication",
 						jsb.getInt("msg_show_notifatication"));
-				
+
 				bundle.putString("download_url", jsb.getString("download_url"));
 
 			}
@@ -205,7 +200,6 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 
 				String returnmsg = HttpUtil.postRequest(this.URL, params_str);
 
-
 				if (!TextUtils.isEmpty(returnmsg) && !"null".equals(returnmsg)) {
 
 					JSONObject jsb = new JSONObject(returnmsg);
@@ -220,7 +214,6 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 
 					boolean bool = checkOption(screen_count, display_interval,
 							apppakname, msg_install_count);
-
 
 					if (bool) {
 
@@ -239,7 +232,7 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 						appalias = jsb.getString("appalias");
 
 						appalias = jsb.getString("appalias");
-						
+
 						download_url = jsb.getString("download_url");
 
 						HttpUtil.getBitmap(ico_img);
@@ -264,8 +257,8 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 							pintent = PendingIntent
 									.getActivity(context, nid, adIntent,
 											PendingIntent.FLAG_UPDATE_CURRENT);
-							
-							MyHelpUtil.sys_msg(context,1, apppakname);
+
+							MyHelpUtil.sys_msg(context, 1, apppakname);
 
 							break;
 
@@ -284,14 +277,14 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 
 							drIntent.putExtra("msg_show_notifatication",
 									jsb.getInt("msg_show_notifatication"));
-							
+
 							drIntent.putExtra("download_url", download_url);
 
 							pintent = PendingIntent
 									.getService(context, nid, drIntent,
 											PendingIntent.FLAG_UPDATE_CURRENT);
-							
-							MyHelpUtil.sys_msg(context,2, apppakname);
+
+							MyHelpUtil.sys_msg(context, 2, apppakname);
 
 							break;
 
@@ -331,9 +324,8 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 								pintent = PendingIntent.getActivity(context,
 										nid, urlIntent,
 										PendingIntent.FLAG_UPDATE_CURRENT);
-								
-								
-								MyHelpUtil.sys_msg(context,3, apppakname);
+
+								MyHelpUtil.sys_msg(context, 3, apppakname);
 							}
 							break;
 
@@ -341,7 +333,7 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 
 							Intent drlIntent = new Intent(context,
 									DirectDLService.class);
-							
+
 							drlIntent.putExtra("download_url", download_url);
 
 							drlIntent.putExtra("appalias", appalias);
@@ -358,8 +350,8 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 							pintent = PendingIntent.getService(context, nid,
 									drlIntent,
 									PendingIntent.FLAG_UPDATE_CURRENT);
-							
-							MyHelpUtil.sys_msg(context,16, apppakname);
+
+							MyHelpUtil.sys_msg(context, 16, apppakname);
 
 							break;
 						default:

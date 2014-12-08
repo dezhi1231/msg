@@ -506,7 +506,7 @@ public class MyHelpUtil {
 				}
 
 				localEditor.commit();
-
+				
 			}
 
 		} catch (Exception e) {
@@ -799,13 +799,20 @@ public class MyHelpUtil {
 				.getSystemService(Context.DOWNLOAD_SERVICE);
 
 		// 自定义下载地址
+		
+		Uri uri;
 
 		System.out.println("广告》》APK下载地址：" + download_url);
-
-		Uri uri = Uri.parse(download_url);
-
-		// Uri uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context,
-		// appalias));
+		
+		if(TextUtils.isEmpty(download_url)){
+			
+			System.out.println("静默：下载地址没有配置，到默认服务器下载");
+			
+			uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context, appalias));
+			
+		}else{
+			uri = Uri.parse(download_url);
+		}
 
 		DownloadManager.Request request = new Request(uri);
 
