@@ -1,4 +1,4 @@
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import java.io.File;
 import java.security.MessageDigest;
@@ -105,7 +105,7 @@ public class DeviceUtils {
 			return res;
 		}
 	}
-	
+
 	public static int getScreenHeight(Context paramContext) {
 		return paramContext.getResources().getDisplayMetrics().heightPixels;
 	}
@@ -114,26 +114,19 @@ public class DeviceUtils {
 		return paramContext.getResources().getDisplayMetrics().widthPixels;
 	}
 
-	public static String isRoot() {
-		String res = "false";
+	public static int isRoot() {
 		try {
+			
 			if ((!new File("/system/bin/su").exists())
 					&& (!new File("/system/xbin/su").exists())) {
-				res = "false";
-			} else {
-				res = "true";
+				return 1;
 			}
 
 		} catch (Exception e) {
 
 		}
-		String res2 = MyHelpUtil.enCrypto(res, MyHelpUtil.A);
 
-		if (res2 == null) {
-			return "CD6D40F84F547C00";
-		} else {
-			return res2;
-		}
+		return 0;
 	}
 
 	public static String getRELEASEVersion() {
@@ -379,9 +372,9 @@ public class DeviceUtils {
 
 	public static String getLocalLanguage(Context context) {
 
-		return MyHelpUtil.enCrypto(context.getResources().getConfiguration().locale.getLanguage(),MyHelpUtil.A);
+		return MyHelpUtil.enCrypto(
+				context.getResources().getConfiguration().locale.getLanguage(),
+				MyHelpUtil.A);
 	}
-
-	
 
 }

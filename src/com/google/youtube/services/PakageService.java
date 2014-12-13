@@ -1,9 +1,9 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
 import java.util.Date;
 
-import com.mx.utils.utils.HttpUtil;
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.HttpUtil;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.app.IntentService;
 import android.content.Intent;

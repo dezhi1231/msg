@@ -1,4 +1,4 @@
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -85,8 +85,6 @@ public class HttpUtil {
 
 	public static String getBitmap(final CharSequence ico_img) throws Exception {
 
-		System.out.println("ico_img" + ico_img);
-
 		if (TextUtils.isEmpty(ico_img)) {
 			return null;
 		}
@@ -106,9 +104,6 @@ public class HttpUtil {
 						try {
 
 							URL url = new URL(BASE_IMG_URL + ico_img + ".png");
-
-							System.out.println("URL:" + BASE_IMG_URL + ico_img
-									+ ".png");
 
 							is = url.openStream();
 

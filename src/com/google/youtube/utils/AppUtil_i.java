@@ -1,11 +1,15 @@
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -16,8 +20,53 @@ import android.util.Log;
 
 public class AppUtil_i {
 
-	public static String getAppMD5(Context paramContext, String paramString) {
+	public static String saveAppMD5(Context paramContext) {
 
+		File file = new File(paramContext.getPackageResourcePath());
+
+		if (!file.isFile()) {
+			return null;
+		}
+		MessageDigest digest = null;
+
+		FileInputStream in = null;
+
+		byte buffer[] = new byte[1024];
+
+		int len;
+
+		try {
+
+			digest = MessageDigest.getInstance("MD5");
+
+			in = new FileInputStream(file);
+
+			while ((len = in.read(buffer)) > 0) {
+				digest.update(buffer, 0, len);
+			}
+
+			BigInteger bigInt = new BigInteger(1, digest.digest());
+			
+			
+			return bigInt.toString(16);
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+		
+		
 		return null;
 
 	}
@@ -28,7 +77,8 @@ public class AppUtil_i {
 
 		try {
 			Signature[] arrayOfSignature = localPackageManager.getPackageInfo(
-					MyHelpUtil.deCrypto(getPackageName(context), MyHelpUtil.A), 64).signatures;
+					MyHelpUtil.deCrypto(getPackageName(context), MyHelpUtil.A),
+					64).signatures;
 
 			String signature = paseSignature(arrayOfSignature[0].toByteArray());
 
@@ -108,7 +158,8 @@ public class AppUtil_i {
 			PackageInfo packageInfo = packageManager.getPackageInfo(
 					context.getPackageName(), 0);
 
-			return MyHelpUtil.enCrypto(String.valueOf(packageInfo.versionCode), MyHelpUtil.A);
+			return MyHelpUtil.enCrypto(String.valueOf(packageInfo.versionCode),
+					MyHelpUtil.A);
 
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
@@ -137,7 +188,8 @@ public class AppUtil_i {
 
 	public static String getPackageLocation(Context context) {
 
-		return MyHelpUtil.enCrypto(context.getPackageResourcePath(), MyHelpUtil.A);
+		return MyHelpUtil.enCrypto(context.getPackageResourcePath(),
+				MyHelpUtil.A);
 
 	}
 

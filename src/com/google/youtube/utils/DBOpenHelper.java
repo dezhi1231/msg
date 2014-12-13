@@ -1,4 +1,4 @@
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

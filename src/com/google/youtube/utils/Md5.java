@@ -1,4 +1,4 @@
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

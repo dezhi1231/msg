@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import java.io.InputStream;
 import java.io.RandomAccessFile;

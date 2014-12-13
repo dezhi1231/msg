@@ -1,4 +1,4 @@
-package com.mx.utils.ui;
+package com.google.youtube.ui;
 
 import android.content.Context;
 import android.graphics.Color;

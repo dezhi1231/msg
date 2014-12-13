@@ -1,7 +1,7 @@
-package com.mx.utils.ui;
+package com.google.youtube.ui;
 
-import com.mx.utils.utils.DeviceUtils;
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.DeviceUtils;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.content.Context;
 import android.graphics.Color;

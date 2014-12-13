@@ -1,6 +1,6 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.app.IntentService;
 import android.content.Intent;

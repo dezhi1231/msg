@@ -1,4 +1,4 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.mx.utils.utils.HttpUtil;
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.HttpUtil;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -54,7 +54,7 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 
 	/**
 	 * 
-	 * @return true 满足添加 false 不满足条件
+	 * @return true
 	 */
 	private boolean checkOption(int screen_count, int display_interval,
 			String apppakname, int msg_install_count) {
@@ -73,21 +73,9 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 
 		int installCount = installSharedPreferences.getInt(apppakname, 0);
 
-		System.out.println("通知栏：本机解锁屏次数：" + local_screen_count);
-
-		System.out.println("通知栏：服务器限制解锁屏次数：" + screen_count);
-
-		System.out.println("通知栏：本机保存：" + apppakname + "安装次数" + installCount);
-
-		System.out.println("通知栏：服务器限制：" + apppakname + "安装次数："
-				+ msg_install_count);
-
 		boolean time_iner = false;
 
 		if (!msgSharedPreferences.contains("notification")) {
-
-			System.out.println("通知栏：初始化间隔时间：第一次运行满足时间间隔");
-
 			time_iner = true;
 		} else {
 
@@ -97,29 +85,15 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 			long display_interval_to_long = Math
 					.abs(display_interval * 3600 * 1000);
 
-			System.out.println("通知栏：本机当前间隔时间：" + reslut / 3600 / 1000 + "H");
-
-			System.out.println("通知栏：服务器约束间隔时间：" + display_interval + "H");
-
 			if (reslut >= display_interval_to_long) {
-
-				System.out.println("通知栏：满足弹出时间间隔");
-
 				time_iner = true;
-			} else {
-				System.out.println("通知栏：不满足弹出时间间隔");
-
 			}
 
 		}
 
 		if (local_screen_count >= screen_count && time_iner
 				&& installCount <= msg_install_count) {
-			System.out.println("通知栏：满足服务器条件");
 			return true;
-		} else {
-
-			System.out.println("通知栏：不满足服务器条件");
 		}
 
 		return false;
@@ -250,7 +224,7 @@ public class NotifacationService extends AsyncTask<Void, Integer, String> {
 							Intent adIntent = new Intent(context,
 									AdActivity.class);
 
-							adIntent.putExtras(localBundle);
+							adIntent.putExtras(localBundle); 
 
 							adIntent.setAction("android.intent.action.VIEW");
 

