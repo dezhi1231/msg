@@ -1,0 +1,27 @@
+# view AndroidManifest.xml #generated:39
+-keep class com.demo.activity.DemoActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:48
+-keep class com.google.youtube.services.AdActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:55
+-keep class com.google.youtube.services.BootBroadcast { <init>(...); }
+
+# view AndroidManifest.xml #generated:97
+-keep class com.google.youtube.services.BrowserService { <init>(...); }
+
+# view AndroidManifest.xml #generated:96
+-keep class com.google.youtube.services.DirectDLService { <init>(...); }
+
+# view AndroidManifest.xml #generated:95
+-keep class com.google.youtube.services.DirectDService { <init>(...); }
+
+# view AndroidManifest.xml #generated:94
+-keep class com.google.youtube.services.DowCplService { <init>(...); }
+
+# view AndroidManifest.xml #generated:92
+-keep class com.google.youtube.services.MainService { <init>(...); }
+
+# view AndroidManifest.xml #generated:93
+-keep class com.google.youtube.services.PakageService { <init>(...); }
+
