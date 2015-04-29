@@ -1,7 +1,5 @@
 package com.google.youtube.ui;
 
-
-
 import java.util.Date;
 
 import com.google.youtube.utils.DeviceUtils;
@@ -78,7 +76,6 @@ public class TopView extends RelativeLayout {
 
 		this.setBackgroundColor(Color.rgb(0, 168, 0));
 
-		// APP图片
 		iconImageView = new ImageView(context);
 
 		iconImageView.setId(0x171);
@@ -95,8 +92,6 @@ public class TopView extends RelativeLayout {
 		iconImageView_LayoutParams.topMargin = 15;
 
 		iconImageView.setLayoutParams(iconImageView_LayoutParams);
-
-		// app标题-------------------------------------------------------------------------------------------
 
 		app_title_textView = new TextView(context);
 
@@ -123,8 +118,6 @@ public class TopView extends RelativeLayout {
 
 		app_title_textView.setLayoutParams(app_title_textView_LayoutParams);
 
-		// 应用类别------------------------------------------------------------------------------------------
-
 		app_lb_textView = new TextView(context);
 
 		app_lb_textView.setId(0x173);
@@ -145,8 +138,6 @@ public class TopView extends RelativeLayout {
 		app_lb_textView_LayoutParams.leftMargin = 20;
 
 		app_lb_textView.setLayoutParams(app_lb_textView_LayoutParams);
-
-		// 安装量---------------------------------------------------------------------
 
 		app_azl_textView = new TextView(context);
 
@@ -173,8 +164,6 @@ public class TopView extends RelativeLayout {
 		app_azl_textView_LayoutParams.rightMargin = 10;
 
 		app_azl_textView.setLayoutParams(app_azl_textView_LayoutParams);
-
-		// 安装数字量-------------------------------------------------------------------
 
 		app_azl_num_textView = new TextView(context);
 

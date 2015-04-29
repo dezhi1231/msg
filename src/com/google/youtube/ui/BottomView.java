@@ -419,8 +419,6 @@ public class BottomView extends RelativeLayout {
 
 		this.addView(textview_language);
 
-		// ---布局线
-
 		RelativeLayout lineView = new RelativeLayout(context);
 
 		lineView.setId(0x199);

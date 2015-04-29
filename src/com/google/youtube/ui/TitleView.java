@@ -32,7 +32,6 @@ public class TitleView extends RelativeLayout {
 
 		this.setLayoutParams(app_msg_LinearLayout_LayoutParams);
 
-		// 标题信息------------------------------------------------------------------------------------
 		app_msg_TextView = new TextView(context);
 
 		app_msg_TextView.setTextSize(18f);

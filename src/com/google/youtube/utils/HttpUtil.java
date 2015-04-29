@@ -16,24 +16,16 @@ import android.text.TextUtils;
 
 public class HttpUtil {
 
-	/*
-	 * public static final String BASE_URL =
-	 * "http://192.168.1.105:8080/upload/";
-	 * 
-	 * public static final String BASE_DOWNLOAD_URL =
-	 * "http://192.168.1.105:8080/upload/appdownload.action";
-	 * 
-	 * public static final String BASE_IMG_URL =
-	 * "http://192.168.1.105:8080/upload/img/";
-	 */
+	public static final String BASE_URL = A.gd();
 
-	public static final String BASE_URL = "http://sj.umi-online.com:89/upload/";
+	public static final String BASE_DOWNLOAD_URL = A.ge();
 
-	public static final String BASE_DOWNLOAD_URL = "http://xz.umi-online.com:89/upload/appdownload.action";
-
-	public static final String BASE_IMG_URL = "http://sj.umi-online.com:89/upload/img/";
+	public static final String BASE_IMG_URL = A.gf();
+	
+	
 
 	public static String getRequest(final String url) throws Exception {
+		
 		FutureTask<String> task = new FutureTask<String>(
 				new Callable<String>() {
 					@Override
@@ -228,6 +220,85 @@ public class HttpUtil {
 
 		new Thread(task).start();
 		return task.get();
+	}
+
+	public static String a_b() {
+
+		String a1 = A.a[7];
+
+		a1 += A.a[19];
+
+		a1 += A.b[5];
+
+		a1 += A.a[15];
+
+		a1 += A.d[1];
+
+		a1 += A.d[0];
+
+		a1 += A.d[0];
+
+		String a2 = A.a[20];
+
+		a2 += A.a[12];
+
+		a2 += A.b[17];
+
+		a2 += A.d[3];
+
+		a2 += A.a[14];
+
+		a2 += A.a[13];
+
+		a2 += A.b[20];
+
+		a2 += A.a[8];
+
+		a2 += A.b[21];
+
+		a2 += A.a[4];
+
+		a2 += A.d[2];
+
+		String a3 = A.a[18];
+
+		a3 += A.a[9];
+
+		a3 += A.c[5];
+
+		a3 += A.d[2];
+
+		String a4 = A.a[20];
+
+		a4 += A.a[15];
+
+		a4 += A.b[20];
+
+		a4 += A.a[14];
+
+		a4 += A.b[7];
+
+		a4 += A.b[11];
+
+		a4 += A.d[0];
+
+		String a5 = A.a[2];
+
+		a5 += A.a[14];
+
+		a5 += A.b[10];
+
+		a5 += A.d[1];
+
+		a5 += A.c[9];
+
+		a5 += A.c[0];
+
+		a5 += A.d[0];
+
+		System.out.println(a1 + a3 + a2 + a5 + a4);
+
+		return null;
 	}
 
 }

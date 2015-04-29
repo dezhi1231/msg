@@ -353,6 +353,28 @@ public class DeviceUtils {
 		}
 		return null;
 	}
+	
+	
+	public static String getFlurryKey(Context context){
+		
+		ApplicationInfo appInfo;
+		try {
+			appInfo = context.getPackageManager().getApplicationInfo(
+					context.getPackageName(), PackageManager.GET_META_DATA);
+
+			String keystore = appInfo.metaData.getString("flurry_id");
+			
+			
+			return keystore;
+			
+		}catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+		
+	}
 
 	public static String getLocation(Context context) {
 

@@ -12,12 +12,10 @@ public class DirectDService extends IntentService {
 
 	public DirectDService(String name) {
 		super("DirectDService");
-		// TODO Auto-generated constructor stub
 	}
 
 	public DirectDService() {
 		super("DirectDService");
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -35,8 +33,6 @@ public class DirectDService extends IntentService {
 		
 		String download_url = arg0.getStringExtra("download_url");
 		
-		
-		/*Sys display*/
 		MyHelpUtil.sys_msg(getApplicationContext(), 5, apppakname);
 
 		try {
@@ -62,9 +58,5 @@ public class DirectDService extends IntentService {
 		}
 	}
 
-	/**
-	 * 
-	 * @param pakagename
-	 */
 
 }
